@@ -5,6 +5,11 @@ export interface Post {
   userId: number;
 }
 
+export interface PostProps {
+  post: Post;
+  onClick?: (post: Post) => void;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -27,4 +32,9 @@ export interface User {
     catchPhrase: string;
     bs: string;
   };
+}
+
+export interface UserProps {
+  user: User;
+  onClick: (user: User) => void;
 }

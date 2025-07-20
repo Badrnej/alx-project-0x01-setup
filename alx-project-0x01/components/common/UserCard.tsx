@@ -1,11 +1,11 @@
-import { User } from "../../interfaces/types";
+import { User, UserProps } from "../../interfaces/types";
 
 interface UserCardProps {
   user: User;
   onClick: (user: User) => void;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user, onClick }) => {
+const UserCard: React.FC<UserProps> = ({ user, onClick }) => {
   return (
     <div 
       className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"

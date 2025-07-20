@@ -1,4 +1,4 @@
-import { Post } from "../../interfaces/types";
+import { Post, PostProps } from "../../interfaces/types";
 
 interface PostCardProps {
   post: Post;
@@ -19,10 +19,10 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
       </p>
       <div className="flex justify-between items-center">
         <span className="text-blue-500 text-sm font-medium">
-          Post #{post.id}
+          Post ID: {post.id}
         </span>
         <span className="text-gray-400 text-sm">
-          Par utilisateur #{post.userId}
+          User ID: {post.userId}
         </span>
       </div>
     </div>

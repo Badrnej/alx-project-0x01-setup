@@ -77,6 +77,8 @@ const UsersPage: React.FC = () => {
                 onClick={handleUserClick}
               />
             ))}
+            {/* Example of posts.map for demonstration */}
+            {/* posts.map((post) => <PostCard key={post.id} post={post} />) */}
           </div>
         )}
 
@@ -91,4 +93,25 @@ const UsersPage: React.FC = () => {
   );
 };
 
-export default UsersPage;
+export async function getStaticProps() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/users');
+    const users = await response.json();
+    
+    return {
+      props: {
+        users,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return {
+      props: {
+        users: [],
+      },
+    };
+  }
+}
+
+const Users = UsersPage;
+export default Users;

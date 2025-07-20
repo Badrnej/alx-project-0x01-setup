@@ -3,7 +3,7 @@ import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
 import PostCard from "../../components/common/PostCard";
 import Modal from "../../components/common/Modal";
-import { Post } from "../../interfaces/types";
+import { Post, PostProps } from "../../interfaces/types";
 import { apiService } from "../../services/api";
 
 const PostsPage: React.FC = () => {
@@ -90,5 +90,25 @@ const PostsPage: React.FC = () => {
     </div>
   );
 };
+
+export async function getStaticProps() {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const posts = await response.json();
+    
+    return {
+      props: {
+        posts,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    return {
+      props: {
+        posts: [],
+      },
+    };
+  }
+}
 
 export default PostsPage;
