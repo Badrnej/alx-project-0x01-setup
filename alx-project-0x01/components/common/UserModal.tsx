@@ -1,85 +1,182 @@
-import { User } from "../../interfaces/types";
+import { UserData, UserModalProps } from "@/interfaces";
+import React, { useState } from "react";
 
-interface UserModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  user: User | null;
-}
+const UserModal: React.FC<UserModalProps> = ({ onClose, onSubmit }) => {
+  const [user, setUser] = useState<UserData>({
+    name: "",
+    username: "",
+    email: "",
+    address: {
+      street: "",
+      suite: "",
+      city: "",
+      zipcode: "",
+      geo: {
+        lat: "",
+        lng: ""
+      }
+    },
+    phone: "",
+    website: "",
+    company: {
+      name: "",
+      catchPhrase: "",
+      bs: ""
+    }
+  });
 
-const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, user }) => {
-  if (!isOpen || !user) return null;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      if (parent === 'address') {
+        setUser((prevUser) => ({
+          ...prevUser,
+          address: {
+            ...prevUser.address,
+            [child]: value
+          }
+        }));
+      } else if (parent === 'company') {
+        setUser((prevUser) => ({
+          ...prevUser,
+          company: {
+            ...prevUser.company,
+            [child]: value
+          }
+        }));
+      }
+    } else {
+      setUser((prevUser) => ({ ...prevUser, [name]: value }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(user);
+    onClose();
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-start mb-6">
-          <div className="flex items-center">
-            <div className="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mr-4">
-              {user.name.charAt(0).toUpperCase()}
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white rounded-lg p-8 shadow-lg w-full max-w-2xl max-h-96 overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New User</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="mb-4">
+              <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={user.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter name"
+              />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">
-                {user.name}
-              </h2>
-              <p className="text-gray-500">@{user.username}</p>
+            <div className="mb-4">
+              <label htmlFor="username" className="block text-gray-700 font-medium mb-2">Username</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={user.username}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter username"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={user.email}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter email"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">Phone</label>
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                value={user.phone}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter phone"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="website" className="block text-gray-700 font-medium mb-2">Website</label>
+              <input
+                type="text"
+                id="website"
+                name="website"
+                value={user.website}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter website"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="address.street" className="block text-gray-700 font-medium mb-2">Street</label>
+              <input
+                type="text"
+                id="address.street"
+                name="address.street"
+                value={user.address.street}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter street"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="address.city" className="block text-gray-700 font-medium mb-2">City</label>
+              <input
+                type="text"
+                id="address.city"
+                name="address.city"
+                value={user.address.city}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter city"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="company.name" className="block text-gray-700 font-medium mb-2">Company Name</label>
+              <input
+                type="text"
+                id="company.name"
+                name="company.name"
+                value={user.company.name}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter company name"
+              />
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
-          >
-            ×
-          </button>
-        </div>
-        
-        <div className="space-y-6">
-          {/* Informations de contact */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Contact</h3>
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <span className="font-medium text-gray-600 w-24">Email:</span>
-                <span className="text-blue-600">{user.email}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-medium text-gray-600 w-24">Téléphone:</span>
-                <span>{user.phone}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="font-medium text-gray-600 w-24">Site web:</span>
-                <span className="text-blue-600">{user.website}</span>
-              </div>
-            </div>
+          <div className="flex justify-between items-center mt-6">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            >
+              Add User
+            </button>
           </div>
-
-          {/* Adresse */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Adresse</h3>
-            <div className="text-gray-600">
-              <p>{user.address.street}, {user.address.suite}</p>
-              <p>{user.address.city} {user.address.zipcode}</p>
-              <p className="text-sm text-gray-500 mt-2">
-                Coordonnées: {user.address.geo.lat}, {user.address.geo.lng}
-              </p>
-            </div>
-          </div>
-
-          {/* Entreprise */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Entreprise</h3>
-            <div className="text-gray-600">
-              <p className="font-medium text-gray-800">{user.company.name}</p>
-              <p className="italic text-blue-600 mb-2">"{user.company.catchPhrase}"</p>
-              <p className="text-sm">{user.company.bs}</p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="border-t pt-4 mt-6 flex justify-center">
-          <span className="text-gray-400 text-sm">
-            Utilisateur ID: #{user.id}
-          </span>
-        </div>
+        </form>
       </div>
     </div>
   );

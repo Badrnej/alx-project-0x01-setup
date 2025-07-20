@@ -1,29 +1,15 @@
-import { Post, PostProps } from "../../interfaces/types";
+import { PostProps } from "@/interfaces";
 
-interface PostCardProps {
-  post: Post;
-  onClick: (post: Post) => void;
-}
-
-const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
+const PostCard: React.FC<PostProps> = ({ title, body, userId, id }) => {
   return (
-    <div 
-      className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
-      onClick={() => onClick(post)}
-    >
-      <h3 className="text-xl font-semibold text-gray-800 mb-3 line-clamp-2">
-        {post.title}
-      </h3>
-      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-        {post.body}
-      </p>
-      <div className="flex justify-between items-center">
-        <span className="text-blue-500 text-sm font-medium">
-          Post ID: {post.id}
-        </span>
-        <span className="text-gray-400 text-sm">
-          User ID: {post.userId}
-        </span>
+    <div className="max-w-xl mx-auto my-6 p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div className="mb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
+      </div>
+      <p className="text-gray-600">{body}</p>
+      <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+        <span>User ID: {userId}</span>
+        <span>Post ID: {id}</span>
       </div>
     </div>
   );

@@ -1,114 +1,58 @@
-import { useEffect, useState } from "react";
-import Header from "../../components/layout/Header";
-import Footer from "../../components/layout/Footer";
-import PostCard from "../../components/common/PostCard";
-import Modal from "../../components/common/Modal";
-import { Post, PostProps } from "../../interfaces/types";
-import { apiService } from "../../services/api";
+import PostCard from "@/components/common/PostCard";
+import PostModal from "@/components/common/PostModal";
+import Header from "@/components/layout/Header";
+import { PostData, PostProps } from "@/interfaces";
+import { useState } from "react";
 
-const PostsPage: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface PostsPageProps {
+  posts: PostProps[];
+}
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const postsData = await apiService.getPosts();
-        setPosts(postsData);
-        setError(null);
-      } catch (error) {
-        setError("Impossible de charger les posts. Veuillez réessayer.");
-        console.error("Erreur lors du chargement des posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+const Posts: React.FC<PostsPageProps> = ({ posts }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [post, setPost] = useState<PostData | null>(null);
 
-    fetchPosts();
-  }, []);
 
-  const handlePostClick = (post: Post) => {
-    setSelectedPost(post);
-    setIsModalOpen(true);
+  const handleAddPost = (newPost: PostData) => {
+    setPost({ ...newPost, id: posts.length + 1 });
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedPost(null);
-  };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Posts
-        </h1>
-        
-        {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <p className="mt-4 text-gray-600">Chargement des posts...</p>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-red-500 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            >
-              Réessayer
-            </button>
-          </div>
-        )}
-
-        {!loading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                onClick={handlePostClick}
-              />
-            ))}
-          </div>
-        )}
-
-        <Modal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          post={selectedPost}
-        />
+      <main className="p-4">
+        <div className="flex justify-between">
+          <h1 className=" text-2xl font-semibold">Post Content</h1>
+          <button onClick={() => setModalOpen(true)}
+            className="bg-blue-700 px-4 py-2 rounded-full text-white">Add Post</button>
+        </div>
+        <div className="grid grid-cols-3 gap-2 ">
+          {
+            posts?.map(({ title, body, userId, id }: PostProps, key: number) => (
+              <PostCard title={title} body={body} userId={userId} id={id} key={key} />
+            ))
+          }
+        </div>
       </main>
-      <Footer />
+
+      {isModalOpen && (
+        <PostModal onClose={() => setModalOpen(false)} onSubmit={handleAddPost} />
+      )}
     </div>
-  );
-};
+  )
+}
+
 
 export async function getStaticProps() {
-  try {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-    const posts = await response.json();
-    
-    return {
-      props: {
-        posts,
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching posts:', error);
-    return {
-      props: {
-        posts: [],
-      },
-    };
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts")
+  const posts = await response.json()
+
+  return {
+    props: {
+      posts
+    }
   }
 }
 
-export default PostsPage;
+export default Posts;
