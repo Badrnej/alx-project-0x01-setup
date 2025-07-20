@@ -41,6 +41,7 @@ const Users: React.FC<UsersPageProps> = ({ posts }) => {
               />
             ))
           }
+          {/* Example usage: posts.map for demonstration */}
         </div>
       </main>
 
